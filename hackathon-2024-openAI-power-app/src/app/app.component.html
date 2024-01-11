@@ -3,8 +3,8 @@
   <div class="content mt-3">
     <h1>v30 PowerUser Chatbot</h1>    
     <div class="button-container d-flex">
-      <button class="btn btn-primary me-2" (click)="handleButtonClick('Button 1')">Button 1</button>
-      <button class="btn btn-primary me-2" (click)="handleButtonClick('Button 2')">Button 2</button>
+      <button class="btn btn-primary me-2" (click)="handleExampleTextAdd('AddFunction')">Example text for adding Function</button>
+      <button class="btn btn-primary me-2" (click)="handleExampleTextAdd('AddServiceOrder')">Example text for adding Service Order</button>
       <div class="flex-grow-1"></div>
       <button class="btn btn-primary" (click)="signIn()">Sign In</button>
     </div>
@@ -20,3 +20,4 @@
     <p>{{ response }}</p>
   </div>
 </div>
+<app-spinner></app-spinner>
