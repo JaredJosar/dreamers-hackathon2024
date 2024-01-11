@@ -26,12 +26,17 @@ export class AppComponent {
     });
   }
 
-  handleButtonClick(buttonName: string) {
-    // Handle button click logic here
-    this.response = `Button '${buttonName}' clicked!`;
+  handleExampleTextAdd(buttonName: string) {
+
+    if (buttonName === "AddFunction") {
+      this.userInput = "Some Example Text for add function";
+    } else if (buttonName === "AddServiceOrder") {
+      this.userInput = "Some Example Text for add service order";
+    }    
   }
 
   signIn() {
-    this.upiService.makeApiCall();
+    // If sign in is required we can add it here.
+    console.log("signin is not yet implemented...")
   }
 }
