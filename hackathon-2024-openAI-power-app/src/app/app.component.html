@@ -1,0 +1,13 @@
+<div class="container mt-3">
+  <div class="header-bar bg-light p-3 d-flex justify-content-between align-items-center">
+    <h1>v30 PowerUser Chatbot</h1>
+  </div>
+  <div class="content mt-3">
+    <label for="textInput" class="form-label">Enter Text:</label>
+    <textarea id="textInput" class="form-control" [(ngModel)]="userInput" placeholder="Type something..." rows="7" (input)="onInputChange()"></textarea>
+    <button (click)="sendMessageToChatGPT()" class="btn btn-primary mt-2">Ask ChatGPT</button>
+    <br>
+    <p class="lead">Response:</p>
+    <p>{{ response }}</p>
+  </div>
+</div>
