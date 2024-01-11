@@ -1,0 +1,18 @@
+.header-bar {
+  background: linear-gradient(to right, #4D47E0, #B065E3);
+  padding: 10px;
+  margin: 0; /* Remove default margin */
+  width: 100vw; /* Use 100vw to fill the entire viewport width */
+  box-sizing: border-box;
+}
+
+.flex-grow-1 {
+  flex-grow: 1; /* This class makes the div grow and push the third button to the right */
+}
+
+/* Update button colors */
+.btn-primary {
+  background-color: #4146E0;
+  border-color: #4146E0;
+  color: #fff;
+}
