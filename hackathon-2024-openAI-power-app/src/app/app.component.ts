@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ChatService } from './services/chat.service';
 import { UPIService } from './services/upi.service';
+import { ChatHistory } from './models/chat-history.interface';
 
 @Component({
   selector: 'app-root',
@@ -10,24 +11,23 @@ import { UPIService } from './services/upi.service';
 export class AppComponent {
   userInput: string = '';
   response: string = '';
-  chatHistory: string[] = [];
+  chatHistory: ChatHistory[] = [];
 
   constructor(private chatService: ChatService, private upiService: UPIService) { }
 
-  onInputChange() {
-    // You can add any processing logic here based on the user input
-    // For simplicity, this example just echoes the input
-    //this.response = 'You entered: ' + this.userInput;
-  }
-
   async sendMessageToChatGPT() {
+    let chatResponse: ChatHistory = {
+        sender: '',
+        response: ''
+    };
     // method to send user message to ChatGPT
     if (this.userInput) {
       (await this.chatService.sendMessage(this.userInput, this.chatHistory)).subscribe(response => {
         // The Open AI response is in the choices array
-        this.response = response;
+        chatResponse.sender = this.userInput;
+        chatResponse.response = response;
         // Add the response to the history
-        this.chatHistory.push(response);
+        this.chatHistory.push(chatResponse);
         // Clear user input after sending
         this.userInput = '';
       });
@@ -43,8 +43,7 @@ export class AppComponent {
     }    
   }
 
-  signIn() {
-    // If sign in is required we can add it here.
-    console.log("signin is not yet implemented...")
+  addExampleText() {
+    this.userInput = "Test 123";
   }
 }

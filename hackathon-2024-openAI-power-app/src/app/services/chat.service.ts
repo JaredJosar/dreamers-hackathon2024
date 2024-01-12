@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { OpenAI } from 'openai';
+import { ChatHistory } from '../models/chat-history.interface';
 import { PromptService } from './prompt.service';
 
 @Injectable({
@@ -12,7 +13,7 @@ export class ChatService {
 
   constructor(private http: HttpClient, private promptService: PromptService) { }
 
-  async sendMessage(userMessage: string, previousMessages: string[]): Promise<Observable<any>> {
+  async sendMessage(userMessage: string, previousMessages: ChatHistory[]): Promise<Observable<any>> {
     
     try {
       let messagesRequestData: any[] = this.getMessageRequestData(userMessage, previousMessages);
@@ -41,13 +42,14 @@ export class ChatService {
     }
   }
 
-  getMessageRequestData(userMessage: string, previousMessages: string[]): any[] {
+  getMessageRequestData(userMessage: string, previousMessages: ChatHistory[]): any[] {
     let initializationPrompt: string = this.promptService.getInitializationPrompt();
 
     let messagesRequestData: any[] =
       [
         { role: 'system', content: initializationPrompt },
-        ...previousMessages.map((msg, index) => ({ role: index % 2 === 0 ? 'user' : 'assistant', content: msg })),
+        ...previousMessages.map(history => ({ role: 'user', content: history.sender })),
+        ...previousMessages.map(history => ({ role: 'assistant', content: history.response })),
         { role: 'user', content: userMessage }
       ];
 
