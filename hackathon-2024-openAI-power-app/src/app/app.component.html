@@ -1,23 +1,20 @@
-<div class="header-bar p-3 d-flex justify-content-between align-items-center"></div>
+<div class="header-bar bg-light p-3 d-flex"></div>
 <div class="container mt-3">
+  <h1 class="justify-content-center align-items-center">v30 PowerUser Chatbot</h1>
+  <button class="btn btn-primary" (click)="addExampleText()"> Add Example Text to Chat</button>
   <div class="content mt-3">
-    <h1>v30 PowerUser Chatbot</h1>    
-    <div class="button-container d-flex">
-      <button class="btn btn-primary me-2" (click)="handleExampleTextAdd('AddFunction')">Example text for adding Function</button>
-      <button class="btn btn-primary me-2" (click)="handleExampleTextAdd('AddServiceOrder')">Example text for adding Service Order</button>
-      <div class="flex-grow-1"></div>
-      <button class="btn btn-primary" (click)="signIn()">Sign In</button>
+    <div class="chat-history flex-scrollable">
+      <div *ngFor="let message of chatHistory" class="message">
+        <div class="sender">{{ message.sender }}</div>
+        <div class="text">{{ message.response }}</div>
+      </div>
     </div>
-    <br>
-    <div class="description mb-2">
-      <p class="text-muted">Please enter your text in the textarea below. You can use the buttons on the left for additional actions.</p>
+    <div class="text-area">
+      <label for="textInput" class="form-label mt-3">Your Message:</label>
+      <textarea id="textInput" class="form-control" [(ngModel)]="userInput" placeholder="Message chatGPT..." rows="3" (keydown.enter)="sendMessageToChatGPT()"></textarea>
+      <br>
+      <button class="btn btn-primary" (click)="sendMessageToChatGPT()">Send</button>
     </div>
-    <br>
-    <textarea id="textInput" class="form-control" [(ngModel)]="userInput" placeholder="Here you can enter your potential data to add/edit" rows="7" (input)="onInputChange()"></textarea>
-    <button (click)="sendMessageToChatGPT()" class="btn btn-primary mt-2">Ask ChatGPT</button>
-    <br>
-    <p class="lead">Response:</p>
-    <p>{{ response }}</p>
   </div>
 </div>
 <app-spinner></app-spinner>

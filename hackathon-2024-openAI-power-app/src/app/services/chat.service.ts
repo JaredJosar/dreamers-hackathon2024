@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { OpenAI } from 'openai';
+import { ChatHistory } from '../models/chat-history.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,13 @@ export class ChatService {
 
   constructor(private http: HttpClient) { }
 
-  async sendMessage(userMessage: string, previousMessages: string[]): Promise<Observable<any>> {
+  async sendMessage(userMessage: string, previousMessages: ChatHistory[]): Promise<Observable<any>> {
     
     try {
       let messagesRequestData: any[] = this.getMessageRequestData(userMessage, previousMessages);
 
       // Initialize OpenAI
-      const openai = new OpenAI({ apiKey: "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", dangerouslyAllowBrowser: true });
+      const openai = new OpenAI({ apiKey: "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", dangerouslyAllowBrowser: true });
 
       // Send the message to OpenAI and await a response
       const chatCompletion = await openai.chat.completions.create({
@@ -40,13 +41,14 @@ export class ChatService {
     }
   }
 
-  getMessageRequestData(userMessage: string, previousMessages: string[]): any[] {
+  getMessageRequestData(userMessage: string, previousMessages: ChatHistory[]): any[] {
     let initializationPrompt: string = this.getInitializationPrompt();
 
     let messagesRequestData: any[] =
       [
         { role: 'system', content: initializationPrompt },
-        ...previousMessages.map((msg, index) => ({ role: index % 2 === 0 ? 'user' : 'assistant', content: msg })),
+        ...previousMessages.map(history => ({ role: 'user', content: history.sender })),
+        ...previousMessages.map(history => ({ role: 'assistant', content: history.response })),
         { role: 'user', content: userMessage }
       ];
 
