@@ -4,7 +4,7 @@
   <button class="btn btn-primary" (click)="addExampleText()"> Add Example Text to Chat</button>
   <div class="content mt-3">
     <div class="chat-history flex-scrollable">
-      <div *ngFor="let message of chatHistory" class="message">
+      <div *ngFor="let message of sharedService.chatHistory" class="message">
         <div class="sender">{{ message.sender }}</div>
         <div class="text">{{ message.response }}</div>
       </div>

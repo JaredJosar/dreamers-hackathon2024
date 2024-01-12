@@ -6,7 +6,7 @@ import { SpinnerService } from '../services/spinner.service';
   template: `
     <div *ngIf="isLoading$ | async" class="spinner-overlay">
       <!-- Add your spinner implementation here -->
-      Loading...
+      Waiting on a response from the UPI...
     </div>
   `,
   styleUrls: ['./spinner.component.css'],

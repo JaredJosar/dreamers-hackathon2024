@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ChatService } from './services/chat.service';
 import { UPIService } from './services/upi.service';
 import { ChatHistory } from './models/chat-history.interface';
+import { SharedService } from './services/shared.service';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +12,8 @@ import { ChatHistory } from './models/chat-history.interface';
 export class AppComponent {
   userInput: string = '';
   response: string = '';
-  chatHistory: ChatHistory[] = [];
 
-  constructor(private chatService: ChatService, private upiService: UPIService) { }
+  constructor(private chatService: ChatService, private upiService: UPIService, public sharedService: SharedService) { }
 
   async sendMessageToChatGPT() {
     let chatResponse: ChatHistory = {
@@ -22,28 +22,19 @@ export class AppComponent {
     };
     // method to send user message to ChatGPT
     if (this.userInput) {
-      (await this.chatService.sendMessage(this.userInput, this.chatHistory)).subscribe(response => {
+      (await this.chatService.sendMessage(this.userInput, this.sharedService.chatHistory)).subscribe(response => {
         // The Open AI response is in the choices array
         chatResponse.sender = this.userInput;
         chatResponse.response = response;
         // Add the response to the history
-        this.chatHistory.push(chatResponse);
+        this.sharedService.chatHistory.push(chatResponse);
         // Clear user input after sending
         this.userInput = '';
       });
     }
   }
 
-  handleExampleTextAdd(buttonName: string) {
-
-    if (buttonName === "AddFunction") {
-      this.userInput = "Some Example Text for add function";
-    } else if (buttonName === "AddServiceOrder") {
-      this.userInput = "Some Example Text for add service order";
-    }    
-  }
-
   addExampleText() {
-    this.userInput = "Test 123";
+    this.userInput = "Can you create an Event for a comic convention that starts today and ends a week from today. Use all other default values.";
   }
 }
