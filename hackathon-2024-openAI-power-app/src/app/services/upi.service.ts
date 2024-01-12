@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-
 import KJUR from 'jsrsasign';
 import { SpinnerService } from './spinner.service';
+import { SharedService } from './shared.service';
+import { ChatHistory } from '../models/chat-history.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class UPIService {
   private userId = "DREAMUSER"
   private key = "4e17e22e-863b-4c2e-9a21-f636ca3be9cf";
 
-  constructor(private spinnerService: SpinnerService) { }
+  constructor(private spinnerService: SpinnerService, public sharedService: SharedService) { }
 
   generateUPIToken(): string {
     const claimSet =
@@ -27,43 +28,57 @@ export class UPIService {
     return token;
   }
 
-  // could potentially have 3 separate generic API functions for GET/PUT/POST
-  // I dont think the method below will easily handle POST without making it muddy
-
-  makeApiCall(apiCall: string, methodCall: string): void {
+  makeApiCall(apiCall: string, methodCall: string, data: string): void {
     const token = this.generateUPIToken();
     this.spinnerService.show();
 
     fetch(this.apiUrlBase + apiCall, {
-      method: methodCall,
+      method: methodCall,      
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
+      body: data
     })
       .then(response => response.json())
       .then(data => {
         console.log('API Response:', data);
         this.spinnerService.hide();
+        this.sendResponseToChatHistory(data);
         return data;
       })
       .catch(error => {
         console.error('API Error:', error);
         this.spinnerService.hide();
+        return error;
       });
   }
 
-  // We could potentially make methods for each endpoint... etc Functions and Services Orders
+  createNewEvent(data: any): void {
+    this.makeApiCall("Events", "POST", data);
+  }
 
-  // The methods in those controllers would look similar to below
+  createNewFunction(data: any): void {
+    this.makeApiCall("Functions", "POST", data);
+  }
 
-  addNewFunction(data: any): void {
 
-    // get JSON data
-    // take values from it
-    // potentially have models that we can assign values to
-    // put those 
+  sendResponseToChatHistory(data: any) {
+    let chatResponse: ChatHistory = {
+      sender: '',
+      response: ''
+    };
 
-    this.makeApiCall("Functions", "POST");
+    if (data.ErrorList) {
+      chatResponse.sender = "ERROR!"
+      chatResponse.response = "There was an issue with creating the data you requested.";
+    } else {
+      chatResponse.sender = "SUCCESS!"
+      chatResponse.response = "You have successfully created data with the API. Here is the data below so you can find it in v30: " + "\n\r" + JSON.stringify(data);
+
+      chatResponse.response = chatResponse.response.substring(0, 200);
+    }
+
+    this.sharedService.chatHistory.push(chatResponse);
   }
 }

@@ -4,14 +4,13 @@ import { Observable, of } from 'rxjs';
 import { OpenAI } from 'openai';
 import { ChatHistory } from '../models/chat-history.interface';
 import { PromptService } from './prompt.service';
+import { UPIService } from './upi.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private apiUrl = 'https://api.openai.com/v1/chat/completions';
-
-  constructor(private http: HttpClient, private promptService: PromptService) { }
+  constructor(private upiService: UPIService, private promptService: PromptService) { }
 
   async sendMessage(userMessage: string, previousMessages: ChatHistory[]): Promise<Observable<any>> {
     
@@ -19,7 +18,7 @@ export class ChatService {
       let messagesRequestData: any[] = this.getMessageRequestData(userMessage, previousMessages);
 
       // Initialize OpenAI
-      const openai = new OpenAI({ apiKey: "Replace with actual API Key.  Cannot put it on Github.", dangerouslyAllowBrowser: true });
+      const openai = new OpenAI({ apiKey: "FAKE KEY", dangerouslyAllowBrowser: true }); //Replace with actual API Key.  Cannot put it on Github.
 
       // Send the message to OpenAI and await a response
       const chatCompletion = await openai.chat.completions.create({
@@ -32,6 +31,12 @@ export class ChatService {
       if (content && content.includes('{') && content.includes('}')) {
         // probably an overly simplistic way to extract JSON from the output, but I only have 2 days so YOLO #speed
         content = content.substring(content.indexOf("{"), content.lastIndexOf("}") + 1);
+
+        if (content.includes("EndpointType") && JSON.parse(content).EndpointType === "Event") {
+          this.upiService.createNewEvent(content);
+        } else if (content.includes("EndpointType") && JSON.parse(content).EndpointType === "Function") {
+          this.upiService.createNewFunction(content);
+        }
       }
       // converts the string to an Observable
       return of(content);
@@ -55,5 +60,4 @@ export class ChatService {
 
     return messagesRequestData;
   }
-
 }
