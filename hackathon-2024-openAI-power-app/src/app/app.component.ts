@@ -10,20 +10,28 @@ import { UPIService } from './services/upi.service';
 export class AppComponent {
   userInput: string = '';
   response: string = '';
+  chatHistory: string[] = [];
 
   constructor(private chatService: ChatService, private upiService: UPIService) { }
 
   onInputChange() {
     // You can add any processing logic here based on the user input
     // For simplicity, this example just echoes the input
-    this.response = 'You entered: ' + this.userInput;
+    //this.response = 'You entered: ' + this.userInput;
   }
 
-  sendMessageToChatGPT() {
-    // New method to send user message to ChatGPT
-    this.chatService.sendMessage(this.userInput).subscribe(response => {
-      this.response = response.choices[0].message.content;
-    });
+  async sendMessageToChatGPT() {
+    // method to send user message to ChatGPT
+    if (this.userInput) {
+      (await this.chatService.sendMessage(this.userInput, this.chatHistory)).subscribe(response => {
+        // The Open AI response is in the choices array
+        this.response = response;
+        // Add the response to the history
+        this.chatHistory.push(response);
+        // Clear user input after sending
+        this.userInput = '';
+      });
+    }
   }
 
   handleExampleTextAdd(buttonName: string) {
